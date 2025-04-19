@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liga de Pádel por Parejas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Fondo degradado sutil */
+            background: linear-gradient(to bottom right, #e0f2fe, #bae6fd); /* sky-100 to sky-200 */
+        }
+        /* Placeholder para selects */
+        select option[disabled]:first-child {
+            display: none;
+        }
+        /* Estilo botones */
+        button {
+            transition: all 0.3s ease;
+        }
+        /* Estilo mensajes feedback */
+        .feedback-message {
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem; /* rounded-lg */
+            font-weight: 500;
+            border: 1px solid transparent;
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+        .feedback-success {
+            background-color: #dcfce7; /* green-100 */
+            color: #166534; /* green-800 */
+            border-color: #86efac; /* green-300 */
+        }
+        .feedback-error {
+            background-color: #fee2e2; /* red-100 */
+            color: #991b1b; /* red-800 */
+            border-color: #fca5a5; /* red-300 */
+        }
+        /* Animación suave para la aparición de mensajes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .feedback-message {
+            animation: fadeIn 0.3s ease-out;
+        }
+        /* Estilo para las tarjetas */
+        .card {
+            background-color: white;
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb; /* border-gray-200 */
+        }
+        /* Mejoras visuales inputs/selects */
+        input[type="text"], select {
+             border-color: #d1d5db; /* border-gray-300 */
+             transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+         input[type="text"]:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6; /* focus:border-blue-500 */
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); /* focus:ring-2 focus:ring-blue-300 */
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="container mx-auto max-w-6xl bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-10 border border-gray-200">
+
+        <div class="text-center mb-10">
+            <img src="https://placehold.co/180x180/E0F2FE/0C4A6E?text=Logo+Liga"
+                 alt="Logo de la Liga"
+                 class="mx-auto mb-4 rounded-full shadow-md border-4 border-white"
+                 id="leagueLogo"
+                 style="width: 120px; height: 120px; object-fit: cover;"
+                 onerror="this.onerror=null; this.src='https://placehold.co/180x180/E0F2FE/0C4A6E?text=Logo+Error';">
+             <h1 class="text-4xl font-bold text-gray-800">Liga de Pádel</h1>
+            <p class="text-lg text-gray-600">Clasificación por Parejas</p>
+        </div>
+
+        <div id="feedbackArea" class="mb-6 min-h-[60px]"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <div class="lg:col-span-1 space-y-6">
+                <div class="card">
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">
+                        <i class="fas fa-user-plus mr-2 text-blue-500"></i>Añadir Jugador
+                    </h2>
+                    <div class="flex items-center space-x-3 mb-3">
+                        <input type="text" id="playerName" placeholder="Nombre del jugador" class="flex-grow p-2 border rounded-md">
+                        <button id="addPlayerBtn" title="Añadir Jugador" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5">
+                            <i class="fas fa-plus"></i> <span class="hidden sm:inline ml-1">Añadir</span>
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-600">Jugadores: <span id="playerCount" class="font-semibold">0</span> / 20</p>
+                </div>
+
+                 <div class="card">
+                     <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">
+                         <i class="fas fa-users mr-2 text-gray-500"></i>Jugadores Inscritos
+                     </h2>
+                     <ul id="playerList" class="list-disc list-inside text-gray-700 max-h-60 overflow-y-auto pr-2">
+                         <li id="noPlayersMsg" class="text-gray-500 italic">Aún no hay jugadores.</li>
+                         </ul>
+                 </div>
+            </div>
+
+            <div class="lg:col-span-2 card">
+                 <h2 class="text-xl font-semibold text-gray-700 mb-5 border-b pb-2">
+                     <i class="fas fa-trophy mr-2 text-yellow-500"></i>Registrar Partido (2 vs 2)
+                 </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+
+                    <fieldset class="border border-blue-300 p-4 rounded-md">
+                        <legend class="text-lg font-medium text-blue-700 px-2">Equipo A</legend>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="teamAPlayer1Select" class="block text-sm font-medium text-gray-700 mb-1">Jugador 1:</label>
+                                <select id="teamAPlayer1Select" class="w-full p-2 border rounded-md bg-white">
+                                    <option value="" disabled selected>Selecciona jugador</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="teamAPlayer2Select" class="block text-sm font-medium text-gray-700 mb-1">Jugador 2:</label>
+                                <select id="teamAPlayer2Select" class="w-full p-2 border rounded-md bg-white">
+                                    <option value="" disabled selected>Selecciona jugador</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <fieldset class="border border-green-300 p-4 rounded-md">
+                        <legend class="text-lg font-medium text-green-700 px-2">Equipo B</legend>
+                        <div class="space-y-3">
+                            <div>
+                                <label for="teamBPlayer1Select" class="block text-sm font-medium text-gray-700 mb-1">Jugador 1:</label>
+                                <select id="teamBPlayer1Select" class="w-full p-2 border rounded-md bg-white">
+                                    <option value="" disabled selected>Selecciona jugador</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="teamBPlayer2Select" class="block text-sm font-medium text-gray-700 mb-1">Jugador 2:</label>
+                                <select id="teamBPlayer2Select" class="w-full p-2 border rounded-md bg-white">
+                                    <option value="" disabled selected>Selecciona jugador</option>
+                                </select>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="md:col-span-2 mt-4">
+                        <label for="matchResult" class="block text-sm font-medium text-gray-700 mb-1">Resultado del Partido:</label>
+                        <select id="matchResult" class="w-full p-2 border rounded-md bg-white">
+                            <option value="" disabled selected>Selecciona el resultado</option>
+                            <option value="teamA">Gana Equipo A</option>
+                            <option value="teamB">Gana Equipo B</option>
+                            <option value="draw">Empate</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2 mt-4">
+                        <button id="recordMatchBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-md shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                            <i class="fas fa-save mr-2"></i>Registrar Resultado
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-10 card">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center border-b pb-3">
+                <i class="fas fa-list-ol mr-2 text-indigo-500"></i>Clasificación General
+            </h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">Rank</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-24">Puntos</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-24">Partidos</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-20">Victorias</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-20">Empates</th>
+                            <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-20">Derrotas</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankingTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Añade jugadores y registra partidos para ver la clasificación.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+             <button id="resetDataBtn" title="Reiniciar todos los datos" class="mt-8 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5 block mx-auto">
+                <i class="fas fa-trash-alt mr-2"></i>Reiniciar Datos
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Constantes y Variables Globales ---
+        const MAX_PLAYERS = 20;
+        const WIN_POINTS = 3;
+        const DRAW_POINTS = 1;
+        const LOSS_POINTS = 0;
+        const LOCAL_STORAGE_KEY = 'padelDoublesRankingApp'; // Clave diferente para no mezclar con la versión anterior
+
+        // --- Elementos del DOM ---
+        const playerNameInput = document.getElementById('playerName');
+        const addPlayerBtn = document.getElementById('addPlayerBtn');
+        const playerCountSpan = document.getElementById('playerCount');
+        const playerListUl = document.getElementById('playerList');
+        const noPlayersMsgLi = document.getElementById('noPlayersMsg');
+        // Selects de jugadores para partido
+        const teamAPlayer1Select = document.getElementById('teamAPlayer1Select');
+        const teamAPlayer2Select = document.getElementById('teamAPlayer2Select');
+        const teamBPlayer1Select = document.getElementById('teamBPlayer1Select');
+        const teamBPlayer2Select = document.getElementById('teamBPlayer2Select');
+        const allPlayerSelects = [teamAPlayer1Select, teamAPlayer2Select, teamBPlayer1Select, teamBPlayer2Select];
+        // Resultado y botón
+        const matchResultSelect = document.getElementById('matchResult');
+        const recordMatchBtn = document.getElementById('recordMatchBtn');
+        // Tabla y feedback
+        const rankingTableBody = document.getElementById('rankingTableBody');
+        const feedbackArea = document.getElementById('feedbackArea');
+        const resetDataBtn = document.getElementById('resetDataBtn');
+        const leagueLogo = document.getElementById('leagueLogo');
+
+        // --- Estado de la Aplicación ---
+        // Estructura jugador: { id: number, name: string, points: number, played: number, wins: number, draws: number, losses: number }
+        let players = loadFromLocalStorage() || [];
+
+        // --- Funciones ---
+
+        /**
+         * Muestra un mensaje de feedback temporal.
+         * @param {string} message - Mensaje a mostrar.
+         * @param {string} type - 'success' o 'error'.
+         */
+        function showFeedback(message, type = 'success') {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = message;
+            messageDiv.classList.add('feedback-message', type === 'success' ? 'feedback-success' : 'feedback-error');
+
+            // Icono opcional
+            const icon = document.createElement('i');
+            icon.classList.add('fas', type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle', 'mr-2');
+            messageDiv.prepend(icon);
+
+            feedbackArea.innerHTML = ''; // Limpiar mensajes anteriores
+            feedbackArea.appendChild(messageDiv);
+
+            // Ocultar y eliminar después de 5 segundos
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                setTimeout(() => messageDiv.remove(), 500);
+            }, 5000);
+        }
+
+        /** Guarda el estado en LocalStorage. */
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(players));
+            } catch (error) {
+                console.error("Error saving to localStorage:", error);
+                showFeedback("No se pudieron guardar los datos. El almacenamiento local podría estar lleno o deshabilitado.", "error");
+            }
+        }
+
+        /** Carga el estado desde LocalStorage. */
+        function loadFromLocalStorage() {
+            try {
+                const data = localStorage.getItem(LOCAL_STORAGE_KEY);
+                // Asegurarse de que los datos cargados tengan la estructura completa
+                if (data) {
+                    const parsedData = JSON.parse(data);
+                    return parsedData.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        points: p.points || 0,
+                        played: p.played || 0,
+                        wins: p.wins || 0,
+                        draws: p.draws || 0,
+                        losses: p.losses || 0
+                    }));
+                }
+                return null;
+            } catch (error) {
+                console.error("Error loading from localStorage:", error);
+                showFeedback("No se pudieron cargar los datos guardados. Podrían estar corruptos.", "error");
+                localStorage.removeItem(LOCAL_STORAGE_KEY); // Limpiar datos corruptos
+                return null;
+            }
+        }
+
+        /** Actualiza la lista de jugadores inscritos en la UI. */
+        function updatePlayerListUI() {
+             playerListUl.innerHTML = ''; // Limpiar lista
+             if (players.length === 0) {
+                 playerListUl.appendChild(noPlayersMsgLi); // Mostrar mensaje si no hay jugadores
+             } else {
+                 const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
+                 sortedPlayers.forEach(player => {
+                     const li = document.createElement('li');
+                     li.textContent = player.name;
+                     li.classList.add('mb-1', 'text-sm');
+                     playerListUl.appendChild(li);
+                 });
+             }
+        }
+
+
+        /** Actualiza todos los desplegables de selección de jugadores. */
+        function updatePlayerDropdowns() {
+            const currentSelections = allPlayerSelects.map(select => select.value);
+
+            const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
+
+            allPlayerSelects.forEach(select => {
+                // Limpiar opciones (excepto la primera deshabilitada)
+                select.innerHTML = '<option value="" disabled selected>Selecciona jugador</option>';
+                // Añadir jugadores
+                sortedPlayers.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player.id;
+                    option.textContent = player.name;
+                    select.appendChild(option);
+                });
+            });
+
+            // Restaurar selecciones si es posible y el jugador aún existe
+             allPlayerSelects.forEach((select, index) => {
+                 if (currentSelections[index] && players.some(p => p.id == currentSelections[index])) {
+                     select.value = currentSelections[index];
+                 }
+             });
+        }
+
+        /** Actualiza la tabla de clasificación. */
+        function updateRankingTable() {
+            rankingTableBody.innerHTML = ''; // Limpiar tabla
+
+            if (players.length === 0) {
+                rankingTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Añade jugadores y registra partidos para ver la clasificación.</td></tr>';
+                return;
+            }
+
+            // Ordenar jugadores: Puntos (desc), Victorias (desc), Nombre (asc)
+            const sortedPlayers = [...players].sort((a, b) => {
+                if (b.points !== a.points) return b.points - a.points;
+                if (b.wins !== a.wins) return b.wins - a.wins; // Desempate por victorias
+                return a.name.localeCompare(b.name); // Desempate final por nombre
+            });
+
+            // Crear filas
+            sortedPlayers.forEach((player, index) => {
+                const row = rankingTableBody.insertRow();
+                row.classList.add(index % 2 === 0 ? 'bg-white' : 'bg-gray-50', 'hover:bg-sky-50');
+
+                // Rank
+                const rankCell = row.insertCell();
+                rankCell.textContent = index + 1;
+                rankCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900', 'text-center');
+
+                // Nombre
+                const nameCell = row.insertCell();
+                nameCell.textContent = player.name;
+                nameCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'text-gray-700');
+
+                // Puntos
+                const pointsCell = row.insertCell();
+                pointsCell.textContent = player.points;
+                pointsCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'font-semibold', 'text-gray-900', 'text-center');
+
+                // Partidos Jugados
+                const playedCell = row.insertCell();
+                playedCell.textContent = player.played;
+                playedCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'text-gray-500', 'text-center');
+
+                 // Victorias
+                const winsCell = row.insertCell();
+                winsCell.textContent = player.wins;
+                winsCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'text-green-600', 'text-center');
+
+                 // Empates
+                const drawsCell = row.insertCell();
+                drawsCell.textContent = player.draws;
+                drawsCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'text-yellow-600', 'text-center');
+
+                 // Derrotas
+                const lossesCell = row.insertCell();
+                lossesCell.textContent = player.losses;
+                lossesCell.classList.add('px-6', 'py-3', 'whitespace-nowrap', 'text-sm', 'text-red-600', 'text-center');
+            });
+        }
+
+        /** Actualiza el contador de jugadores. */
+        function updatePlayerCount() {
+            playerCountSpan.textContent = players.length;
+            const limitReached = players.length >= MAX_PLAYERS;
+            addPlayerBtn.disabled = limitReached;
+            playerNameInput.disabled = limitReached;
+            playerNameInput.placeholder = limitReached ? "Máximo alcanzado" : "Nombre del jugador";
+            if (limitReached) {
+                 addPlayerBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                 playerNameInput.classList.add('bg-gray-100');
+            } else {
+                 addPlayerBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                 playerNameInput.classList.remove('bg-gray-100');
+            }
+        }
+
+        /** Añade un nuevo jugador. */
+        function handleAddPlayer() {
+            const name = playerNameInput.value.trim();
+
+            if (!name) {
+                showFeedback("Por favor, introduce un nombre para el jugador.", "error");
+                return;
+            }
+            if (players.length >= MAX_PLAYERS) {
+                showFeedback(`No se pueden añadir más de ${MAX_PLAYERS} jugadores.`, "error");
+                return;
+            }
+            if (players.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+                showFeedback(`El jugador "${name}" ya existe. Introduce un nombre único.`, "error");
+                return;
+            }
+
+            const newPlayer = {
+                id: Date.now(),
+                name: name,
+                points: 0,
+                played: 0,
+                wins: 0,
+                draws: 0,
+                losses: 0
+            };
+            players.push(newPlayer);
+
+            playerNameInput.value = '';
+            updateAllUI();
+            saveToLocalStorage();
+            showFeedback(`Jugador "${name}" añadido correctamente.`, "success");
+            playerNameInput.focus();
+        }
+
+        /** Registra el resultado de un partido por parejas. */
+        function handleRecordMatch() {
+            const teamAIds = [parseInt(teamAPlayer1Select.value), parseInt(teamAPlayer2Select.value)];
+            const teamBIds = [parseInt(teamBPlayer1Select.value), parseInt(teamBPlayer2Select.value)];
+            const result = matchResultSelect.value;
+
+            // Validar selección completa
+            if (teamAIds.some(isNaN) || teamBIds.some(isNaN)) {
+                showFeedback("Selecciona los 4 jugadores para el partido.", "error");
+                return;
+            }
+
+            // Validar jugadores únicos
+            const allSelectedIds = [...teamAIds, ...teamBIds];
+            const uniqueIds = new Set(allSelectedIds);
+            if (uniqueIds.size !== 4) {
+                 showFeedback("Un jugador no puede estar en dos posiciones o equipos a la vez.", "error");
+                 return;
+            }
+
+            if (!result) {
+                showFeedback("Selecciona el resultado del partido.", "error");
+                return;
+            }
+
+            // Obtener objetos jugador
+            const teamAPlayers = teamAIds.map(id => players.find(p => p.id === id));
+            const teamBPlayers = teamBIds.map(id => players.find(p => p.id === id));
+
+            if (teamAPlayers.some(p => !p) || teamBPlayers.some(p => !p)) {
+                 showFeedback("Error interno: No se encontraron algunos jugadores seleccionados.", "error");
+                 console.error("Error finding players:", teamAIds, teamBIds);
+                 return;
+            }
+
+            // Actualizar estadísticas y puntos
+            let feedbackMsg = `Partido registrado: ${teamAPlayers[0].name}/${teamAPlayers[1].name} vs ${teamBPlayers[0].name}/${teamBPlayers[1].name}. `;
+
+            if (result === 'teamA') {
+                teamAPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
+                teamBPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
+                feedbackMsg += `Victoria para Equipo A.`;
+            } else if (result === 'teamB') {
+                teamBPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
+                teamAPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
+                 feedbackMsg += `Victoria para Equipo B.`;
+            } else if (result === 'draw') {
+                [...teamAPlayers, ...teamBPlayers].forEach(p => { p.points += DRAW_POINTS; p.draws++; p.played++; });
+                 feedbackMsg += `Empate.`;
+            }
+
+            updateAllUI();
+            saveToLocalStorage();
+            showFeedback(feedbackMsg, "success");
+
+            // Resetear selects de partido
+            allPlayerSelects.forEach(select => select.value = "");
+            matchResultSelect.value = "";
+        }
+
+        /** Reinicia todos los datos. */
+        function handleResetData() {
+            if (confirm("⚠️ ¿Estás MUY seguro?\n\nSe borrarán TODOS los jugadores y resultados.\nEsta acción NO SE PUEDE DESHACER.")) {
+                if (confirm("ÚLTIMA OPORTUNIDAD: ¿Confirmas el borrado completo de datos?")) {
+                    players = [];
+                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                    updateAllUI();
+                    feedbackArea.innerHTML = ''; // Limpiar mensajes
+                    showFeedback("Todos los datos han sido reiniciados.", "success");
+                } else {
+                     showFeedback("Reinicio cancelado.", "success");
+                }
+            } else {
+                 showFeedback("Reinicio cancelado.", "success");
+            }
+        }
+
+        /** Función para actualizar toda la UI. */
+        function updateAllUI() {
+            updatePlayerDropdowns();
+            updateRankingTable();
+            updatePlayerCount();
+            updatePlayerListUI(); // Actualizar lista de jugadores
+        }
+
+        // --- Event Listeners ---
+        addPlayerBtn.addEventListener('click', handleAddPlayer);
+        playerNameInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                handleAddPlayer();
+            }
+        });
+        recordMatchBtn.addEventListener('click', handleRecordMatch);
+        resetDataBtn.addEventListener('click', handleResetData);
+
+        // --- Inicialización ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // **IMPORTANTE:** Configura la URL de tu logo aquí si la tienes
+             // const logoUrl = "URL_DE_TU_IMAGEN_AQUI"; // Ejemplo: "https://tusitio.com/logo_liga.jpg"
+             // if (logoUrl && logoUrl !== "URL_DE_TU_IMAGEN_AQUI") {
+             //    leagueLogo.src = logoUrl;
+             // }
+
+             updateAllUI(); // Cargar datos y actualizar UI
+        });
+
+    </script>
+
+</body>
+</html>
