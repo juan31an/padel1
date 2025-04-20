@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Liga de Pádel por Parejas - Stats</title>
+    <title>Liga de Pádel - Historial y Edición</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(to bottom right, #e0f2fe, #bae6fd); /* sky-100 to sky-200 */
+            background: linear-gradient(to bottom right, #e0f2fe, #d0eaff); /* Light blue gradient */
         }
         select option[disabled]:first-child { display: none; }
         button { transition: all 0.3s ease; }
@@ -27,7 +27,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         .card {
             background-color: white; border-radius: 0.75rem; padding: 1.5rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04); /* Softer shadow */
             border: 1px solid #e5e7eb; /* border-gray-200 */
         }
         input[type="text"], select {
@@ -38,35 +38,29 @@
             outline: none; border-color: #3b82f6; /* focus:border-blue-500 */
             box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3); /* focus:ring-2 focus:ring-blue-300 */
         }
-        /* Estilo para la lista de parejas */
-        #partnershipList li {
-            padding: 0.3rem 0;
+        /* Estilo para listas */
+        .styled-list li {
+            padding: 0.4rem 0.2rem;
             border-bottom: 1px dashed #e5e7eb; /* border-gray-200 */
         }
-         #partnershipList li:last-child {
-            border-bottom: none;
-        }
+         .styled-list li:last-child { border-bottom: none; }
         /* Estilo para el SVG del logo */
-        .padel-logo-svg {
-            width: 100px; /* Ancho del logo */
-            height: 100px; /* Alto del logo */
-            margin: auto; /* Centrar */
-            display: block;
-        }
+        .padel-logo-svg { width: 100px; height: 100px; margin: auto; display: block; }
+        /* Scrollbar styling (optional) */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 3px;} /* slate-100 */
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 3px;} /* slate-400 */
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; } /* slate-500 */
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="container mx-auto max-w-7xl bg-white/90 backdrop-blur-md rounded-2xl shadow-xl p-6 md:p-10 border border-gray-200">
+    <div class="container mx-auto max-w-screen-xl bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 md:p-10 border border-gray-200">
 
         <div class="text-center mb-10">
-             <svg id="leagueLogo" class="padel-logo-svg mb-4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Pala de Padel">
-                <defs>
-                    <pattern id="holes" patternUnits="userSpaceOnUse" width="10" height="10">
-                        <circle cx="5" cy="5" r="2" fill="#bae6fd"/> </pattern>
-                </defs>
-                <circle cx="50" cy="35" r="30" fill="url(#holes)" stroke="#0ea5e9" stroke-width="3"/> <circle cx="50" cy="35" r="30" fill="none" stroke="#0284c7" stroke-width="4"/> <circle cx="50" cy="35" r="26" fill="none" stroke="#0ea5e9" stroke-width="1.5" opacity="0.7"/> <path d="M 42 65 Q 42 75, 44 85 L 56 85 Q 58 75, 58 65 Z" fill="#7dd3fc" stroke="#0369a1" stroke-width="2"/> <line x1="43" y1="70" x2="57" y2="70" stroke="#0ea5e9" stroke-width="1.5"/>
-                 <line x1="44" y1="78" x2="56" y2="78" stroke="#0ea5e9" stroke-width="1.5"/>
+            <svg id="leagueLogo" class="padel-logo-svg mb-4" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Logo Pala de Padel">
+                <defs><pattern id="holes" patternUnits="userSpaceOnUse" width="10" height="10"><circle cx="5" cy="5" r="2" fill="#bae6fd"/></pattern></defs>
+                <circle cx="50" cy="35" r="30" fill="url(#holes)" stroke="#0ea5e9" stroke-width="3"/><circle cx="50" cy="35" r="30" fill="none" stroke="#0284c7" stroke-width="4"/><circle cx="50" cy="35" r="26" fill="none" stroke="#0ea5e9" stroke-width="1.5" opacity="0.7"/><path d="M 42 65 Q 42 75, 44 85 L 56 85 Q 58 75, 58 65 Z" fill="#7dd3fc" stroke="#0369a1" stroke-width="2"/><line x1="43" y1="70" x2="57" y2="70" stroke="#0ea5e9" stroke-width="1.5"/><line x1="44" y1="78" x2="56" y2="78" stroke="#0ea5e9" stroke-width="1.5"/>
             </svg>
             <h1 class="text-4xl font-bold text-gray-800">Liga de Pádel</h1>
             <p class="text-lg text-gray-600">Clasificación y Estadísticas</p>
@@ -74,132 +68,85 @@
 
         <div id="feedbackArea" class="mb-6 min-h-[60px]"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-            <div class="lg:col-span-1 space-y-6">
+            <div class="xl:col-span-1 space-y-6">
                 <div class="card">
-                    <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center">
-                        <i class="fas fa-user-plus mr-2 text-blue-500"></i>Añadir Jugador
-                    </h2>
+                    <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center"><i class="fas fa-user-plus mr-2 text-blue-500"></i>Añadir Jugador</h2>
                     <div class="flex items-center space-x-3 mb-3">
                         <input type="text" id="playerName" placeholder="Nombre del jugador" class="flex-grow p-2 border rounded-md">
-                        <button id="addPlayerBtn" title="Añadir Jugador" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5">
-                            <i class="fas fa-plus"></i> <span class="hidden sm:inline ml-1">Añadir</span>
-                        </button>
+                        <button id="addPlayerBtn" title="Añadir Jugador" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-3 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5"><i class="fas fa-plus"></i></button>
                     </div>
                     <p class="text-sm text-gray-600">Jugadores: <span id="playerCount" class="font-semibold">0</span> / 20</p>
                 </div>
-
                 <div class="card">
-                     <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center">
-                         <i class="fas fa-users mr-2 text-gray-500"></i>Jugadores Inscritos
-                     </h2>
-                     <ul id="playerList" class="list-none text-gray-700 max-h-60 overflow-y-auto pr-2 space-y-1">
-                         <li id="noPlayersMsg" class="text-gray-500 italic">Aún no hay jugadores.</li>
-                         </ul>
+                     <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center"><i class="fas fa-users mr-2 text-gray-500"></i>Jugadores Inscritos</h2>
+                     <ul id="playerList" class="list-none text-gray-700 max-h-40 overflow-y-auto pr-2 space-y-1 custom-scrollbar styled-list">
+                         <li class="text-gray-500 italic">Aún no hay jugadores.</li>
+                     </ul>
                  </div>
-
                  <div class="card">
-                     <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center">
-                         <i class="fas fa-handshake mr-2 text-teal-500"></i>Estadísticas de Parejas
-                     </h2>
+                     <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center"><i class="fas fa-handshake mr-2 text-teal-500"></i>Estadísticas de Parejas</h2>
                      <div>
                          <label for="partnershipPlayerSelect" class="block text-sm font-medium text-gray-700 mb-1">Ver parejas de:</label>
                          <select id="partnershipPlayerSelect" class="w-full p-2 border rounded-md bg-white mb-3">
                              <option value="" disabled selected>Selecciona un jugador</option>
-                             </select>
-                         <div id="partnershipStatsArea" class="mt-2 max-h-48 overflow-y-auto">
-                             <p id="partnershipPlaceholder" class="text-gray-500 italic text-sm">Selecciona un jugador para ver sus estadísticas de pareja.</p>
-                             <ul id="partnershipList" class="list-none text-gray-700 text-sm space-y-1">
-                                 </ul>
+                         </select>
+                         <div id="partnershipStatsArea" class="mt-2 max-h-40 overflow-y-auto custom-scrollbar">
+                             <p id="partnershipPlaceholder" class="text-gray-500 italic text-sm">Selecciona un jugador.</p>
+                             <ul id="partnershipList" class="list-none text-gray-700 text-sm space-y-1 styled-list"></ul>
                          </div>
                      </div>
                  </div>
             </div>
 
-            <div class="lg:col-span-1 card">
-                 <h2 class="text-xl font-semibold text-gray-700 mb-5 border-b pb-2 flex items-center">
-                     <i class="fas fa-trophy mr-2 text-yellow-500"></i>Registrar Partido (2 vs 2)
-                 </h2>
+            <div class="xl:col-span-1 card">
+                 <h2 class="text-xl font-semibold text-gray-700 mb-5 border-b pb-2 flex items-center"><i class="fas fa-trophy mr-2 text-yellow-500"></i>Registrar Partido</h2>
                 <div class="space-y-4">
-                    <fieldset class="border border-blue-300 p-4 rounded-md">
-                        <legend class="text-base font-medium text-blue-700 px-2">Equipo A</legend>
-                        <div class="space-y-3 mt-1">
-                            <div>
-                                <label for="teamAPlayer1Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 1:</label>
-                                <select id="teamAPlayer1Select" class="w-full p-2 border rounded-md bg-white text-sm">
-                                    <option value="" disabled selected>Selecciona jugador</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="teamAPlayer2Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 2:</label>
-                                <select id="teamAPlayer2Select" class="w-full p-2 border rounded-md bg-white text-sm">
-                                    <option value="" disabled selected>Selecciona jugador</option>
-                                </select>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <fieldset class="border border-green-300 p-4 rounded-md">
-                        <legend class="text-base font-medium text-green-700 px-2">Equipo B</legend>
-                        <div class="space-y-3 mt-1">
-                            <div>
-                                <label for="teamBPlayer1Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 1:</label>
-                                <select id="teamBPlayer1Select" class="w-full p-2 border rounded-md bg-white text-sm">
-                                    <option value="" disabled selected>Selecciona jugador</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="teamBPlayer2Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 2:</label>
-                                <select id="teamBPlayer2Select" class="w-full p-2 border rounded-md bg-white text-sm">
-                                    <option value="" disabled selected>Selecciona jugador</option>
-                                </select>
-                            </div>
-                        </div>
-                    </fieldset>
-
-                    <div class="pt-2">
-                        <label for="matchResult" class="block text-sm font-medium text-gray-700 mb-1">Resultado del Partido:</label>
-                        <select id="matchResult" class="w-full p-2 border rounded-md bg-white">
-                            <option value="" disabled selected>Selecciona el resultado</option>
-                            <option value="teamA">Gana Equipo A</option>
-                            <option value="teamB">Gana Equipo B</option>
-                            <option value="draw">Empate</option>
-                        </select>
-                    </div>
-
-                    <div class="pt-2">
-                        <button id="recordMatchBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-4 rounded-md shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            <i class="fas fa-save mr-2"></i>Registrar Resultado
-                        </button>
-                    </div>
+                    <fieldset class="border border-blue-300 p-3 rounded-md"><legend class="text-base font-medium text-blue-700 px-2">Equipo A</legend><div class="space-y-2 mt-1">
+                            <div><label for="teamAPlayer1Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 1:</label><select id="teamAPlayer1Select" class="w-full p-2 border rounded-md bg-white text-sm"><option value="" disabled selected>Selecciona</option></select></div>
+                            <div><label for="teamAPlayer2Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 2:</label><select id="teamAPlayer2Select" class="w-full p-2 border rounded-md bg-white text-sm"><option value="" disabled selected>Selecciona</option></select></div>
+                    </div></fieldset>
+                    <fieldset class="border border-green-300 p-3 rounded-md"><legend class="text-base font-medium text-green-700 px-2">Equipo B</legend><div class="space-y-2 mt-1">
+                            <div><label for="teamBPlayer1Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 1:</label><select id="teamBPlayer1Select" class="w-full p-2 border rounded-md bg-white text-sm"><option value="" disabled selected>Selecciona</option></select></div>
+                            <div><label for="teamBPlayer2Select" class="block text-xs font-medium text-gray-600 mb-1">Jugador 2:</label><select id="teamBPlayer2Select" class="w-full p-2 border rounded-md bg-white text-sm"><option value="" disabled selected>Selecciona</option></select></div>
+                    </div></fieldset>
+                    <div class="pt-1"><label for="matchResult" class="block text-sm font-medium text-gray-700 mb-1">Resultado:</label><select id="matchResult" class="w-full p-2 border rounded-md bg-white">
+                            <option value="" disabled selected>Selecciona resultado</option><option value="teamA">Gana Equipo A</option><option value="teamB">Gana Equipo B</option><option value="draw">Empate</option>
+                    </select></div>
+                    <div class="pt-1"><button id="recordMatchBtn" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-2.5 px-4 rounded-md shadow-md hover:shadow-lg transform hover:-translate-y-0.5"><i class="fas fa-save mr-2"></i>Registrar Resultado</button></div>
                 </div>
             </div>
 
-            <div class="lg:col-span-1 card">
-                <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center border-b pb-3 flex items-center justify-center">
-                    <i class="fas fa-list-ol mr-2 text-indigo-500"></i>Clasificación General
-                </h2>
-                <div class="overflow-x-auto max-h-[70vh]"> <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-100 sticky top-0 z-10"> <tr>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">Rank</th>
-                                <th scope="col" class="px-4 py-3 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">Pts</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">PJ</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">V</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">E</th>
-                                <th scope="col" class="px-4 py-3 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-16">D</th>
-                            </tr>
-                        </thead>
+            <div class="xl:col-span-1 card">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2 flex items-center"><i class="fas fa-history mr-2 text-purple-500"></i>Historial de Partidos</h2>
+                <div id="matchHistoryArea" class="max-h-[65vh] overflow-y-auto custom-scrollbar pr-2">
+                    <ul id="matchHistoryList" class="list-none text-gray-800 text-sm space-y-3">
+                         <li class="text-gray-500 italic">No hay partidos registrados.</li>
+                         </ul>
+                </div>
+            </div>
+
+            <div class="xl:col-span-1 card">
+                <h2 class="text-xl font-semibold text-gray-700 mb-4 text-center border-b pb-3 flex items-center justify-center"><i class="fas fa-list-ol mr-2 text-indigo-500"></i>Clasificación General</h2>
+                <div class="overflow-x-auto max-h-[65vh] custom-scrollbar">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-100 sticky top-0 z-10"><tr>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-10">Rk</th>
+                            <th scope="col" class="px-3 py-2 text-left text-xs font-bold text-gray-600 uppercase tracking-wider">Nombre</th>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">Pts</th>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">PJ</th>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">V</th>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">E</th>
+                            <th scope="col" class="px-3 py-2 text-center text-xs font-bold text-gray-600 uppercase tracking-wider w-12">D</th>
+                        </tr></thead>
                         <tbody id="rankingTableBody" class="bg-white divide-y divide-gray-200">
-                            <tr>
-                                <td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Añade jugadores y registra partidos para ver la clasificación.</td>
-                            </tr>
+                            <tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Cargando...</td></tr>
                         </tbody>
                     </table>
                 </div>
-                 <button id="resetDataBtn" title="Reiniciar todos los datos" class="mt-6 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-5 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5 block mx-auto">
-                    <i class="fas fa-trash-alt mr-2"></i>Reiniciar Datos
+                 <button id="resetDataBtn" title="Reiniciar todos los datos" class="mt-4 bg-red-600 hover:bg-red-700 text-white font-semibold py-1.5 px-4 rounded-md shadow hover:shadow-lg transform hover:-translate-y-0.5 block mx-auto text-sm">
+                    <i class="fas fa-trash-alt mr-1"></i>Reiniciar Todo
                 </button>
             </div>
         </div> </div> <script>
@@ -208,14 +155,13 @@
         const WIN_POINTS = 3;
         const DRAW_POINTS = 1;
         const LOSS_POINTS = 0;
-        const LOCAL_STORAGE_KEY = 'padelDoublesRankingApp_v2'; // Clave actualizada
+        const LOCAL_STORAGE_KEY = 'padelLeagueApp_v3'; // Nueva clave para historial
 
         // --- Elementos del DOM ---
         const playerNameInput = document.getElementById('playerName');
         const addPlayerBtn = document.getElementById('addPlayerBtn');
         const playerCountSpan = document.getElementById('playerCount');
         const playerListUl = document.getElementById('playerList');
-        // const noPlayersMsgLi = document.getElementById('noPlayersMsg'); // No se necesita si se genera dinámicamente
         const teamAPlayer1Select = document.getElementById('teamAPlayer1Select');
         const teamAPlayer2Select = document.getElementById('teamAPlayer2Select');
         const teamBPlayer1Select = document.getElementById('teamBPlayer1Select');
@@ -226,21 +172,30 @@
         const rankingTableBody = document.getElementById('rankingTableBody');
         const feedbackArea = document.getElementById('feedbackArea');
         const resetDataBtn = document.getElementById('resetDataBtn');
-        // const leagueLogo = document.getElementById('leagueLogo'); // No se necesita si es SVG inline
         const partnershipPlayerSelect = document.getElementById('partnershipPlayerSelect');
         const partnershipStatsArea = document.getElementById('partnershipStatsArea');
         const partnershipListUl = document.getElementById('partnershipList');
         const partnershipPlaceholder = document.getElementById('partnershipPlaceholder');
+        // Historial
+        const matchHistoryListUl = document.getElementById('matchHistoryList');
 
         // --- Estado de la Aplicación ---
-        let appData = loadFromLocalStorage() || { players: [], partnershipData: {} };
-        let players = appData.players;
-        let partnershipData = appData.partnershipData;
+        // players: [{ id: number, name: string }] <- Solo ID y nombre
+        // matchHistory: [{ id: number, teamA: [id1, id2], teamB: [id1, id2], result: 'teamA'|'teamB'|'draw', timestamp: number }]
+        let appState = {
+            players: [],
+            matchHistory: []
+        };
+        // Variables para estadísticas calculadas (no guardadas en localStorage)
+        let calculatedStats = {
+            playerStats: {}, // { playerId: { points: 0, played: 0, wins: 0, draws: 0, losses: 0 }, ... }
+            partnershipData: {} // { "minId-maxId": count, ... }
+        };
 
         // --- Funciones ---
 
         /** Muestra feedback temporal */
-        function showFeedback(message, type = 'success') {
+        function showFeedback(message, type = 'success') { /* ... (sin cambios) ... */
             const messageDiv = document.createElement('div');
             messageDiv.textContent = message;
             messageDiv.classList.add('feedback-message', type === 'success' ? 'feedback-success' : 'feedback-error');
@@ -255,67 +210,103 @@
             }, 5000);
         }
 
-        /** Guarda todo el estado (jugadores y datos de parejas) */
-        function saveToLocalStorage() {
+        /** Guarda estado (jugadores e historial) en localStorage */
+        function saveStateToLocalStorage() {
             try {
-                const dataToSave = { players: players, partnershipData: partnershipData };
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(dataToSave));
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(appState));
             } catch (error) {
-                console.error("Error saving to localStorage:", error);
+                console.error("Error saving state to localStorage:", error);
                 showFeedback("No se pudieron guardar los datos.", "error");
             }
         }
 
-        /** Carga el estado completo */
-        function loadFromLocalStorage() {
+        /** Carga estado desde localStorage */
+        function loadStateFromLocalStorage() {
             try {
                 const data = localStorage.getItem(LOCAL_STORAGE_KEY);
                 if (data) {
-                    const parsedData = JSON.parse(data);
-                    parsedData.players = parsedData.players.map(p => ({
-                        id: p.id, name: p.name,
-                        points: p.points || 0, played: p.played || 0,
-                        wins: p.wins || 0, draws: p.draws || 0, losses: p.losses || 0
-                    }));
-                    parsedData.partnershipData = parsedData.partnershipData || {};
-                    return parsedData;
+                    const loadedState = JSON.parse(data);
+                    // Validar y asegurar estructura
+                    appState.players = Array.isArray(loadedState.players) ? loadedState.players : [];
+                    appState.matchHistory = Array.isArray(loadedState.matchHistory) ? loadedState.matchHistory : [];
+                } else {
+                    appState = { players: [], matchHistory: [] }; // Inicializar si no hay datos
                 }
-                return null;
             } catch (error) {
-                console.error("Error loading from localStorage:", error);
+                console.error("Error loading state from localStorage:", error);
                 showFeedback("No se pudieron cargar los datos guardados.", "error");
-                localStorage.removeItem(LOCAL_STORAGE_KEY);
-                return null;
+                localStorage.removeItem(LOCAL_STORAGE_KEY); // Limpiar datos corruptos
+                appState = { players: [], matchHistory: [] };
             }
         }
 
-        /** Actualiza lista de jugadores UI */
+        /** Recalcula todas las estadísticas desde el historial */
+        function recalculateAllStats() {
+            calculatedStats.playerStats = {};
+            calculatedStats.partnershipData = {};
+
+            // Inicializar stats para todos los jugadores existentes
+            appState.players.forEach(player => {
+                calculatedStats.playerStats[player.id] = { points: 0, played: 0, wins: 0, draws: 0, losses: 0 };
+            });
+
+            // Procesar cada partido en el historial
+            appState.matchHistory.forEach(match => {
+                const teamAPlayers = match.teamA.map(id => calculatedStats.playerStats[id]).filter(p => p); // Filtrar por si un jugador fue eliminado
+                const teamBPlayers = match.teamB.map(id => calculatedStats.playerStats[id]).filter(p => p);
+
+                if (teamAPlayers.length !== 2 || teamBPlayers.length !== 2) {
+                    console.warn(`Skipping match ID ${match.id} due to missing player stats.`);
+                    return; // Saltar partido si falta algún jugador (podría haber sido eliminado)
+                }
+
+                // Actualizar stats de jugadores
+                if (match.result === 'teamA') {
+                    teamAPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
+                    teamBPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
+                } else if (match.result === 'teamB') {
+                    teamBPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
+                    teamAPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
+                } else if (match.result === 'draw') {
+                    [...teamAPlayers, ...teamBPlayers].forEach(p => { p.points += DRAW_POINTS; p.draws++; p.played++; });
+                }
+
+                // Actualizar stats de parejas
+                const updatePartnership = (id1, id2) => {
+                    // Asegurarse de que ambos IDs existen en playerStats antes de registrar la pareja
+                    if (calculatedStats.playerStats[id1] && calculatedStats.playerStats[id2]) {
+                        const key = `${Math.min(id1, id2)}-${Math.max(id1, id2)}`;
+                        calculatedStats.partnershipData[key] = (calculatedStats.partnershipData[key] || 0) + 1;
+                    }
+                };
+                updatePartnership(match.teamA[0], match.teamA[1]);
+                updatePartnership(match.teamB[0], match.teamB[1]);
+            });
+        }
+
+        /** Actualiza UI: Lista de jugadores inscritos */
         function updatePlayerListUI() {
-             playerListUl.innerHTML = ''; // Limpiar siempre antes de añadir
-             if (players.length === 0) {
-                 const li = document.createElement('li');
-                 // li.id = 'noPlayersMsg'; // ID no es estrictamente necesario aquí
-                 li.textContent = 'Aún no hay jugadores.';
-                 li.classList.add('text-gray-500', 'italic');
-                 playerListUl.appendChild(li);
+             playerListUl.innerHTML = '';
+             if (appState.players.length === 0) {
+                 playerListUl.innerHTML = '<li class="text-gray-500 italic">Aún no hay jugadores.</li>';
              } else {
-                 const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
+                 const sortedPlayers = [...appState.players].sort((a, b) => a.name.localeCompare(b.name));
                  sortedPlayers.forEach(player => {
                      const li = document.createElement('li');
                      li.textContent = player.name;
-                     li.classList.add('text-sm', 'py-1');
+                     li.classList.add('text-sm');
                      playerListUl.appendChild(li);
                  });
              }
         }
 
-        /** Actualiza los 4 desplegables de selección de jugadores para partido */
+        /** Actualiza UI: Desplegables de selección de jugadores para partido */
         function updateMatchPlayerDropdowns() {
             const currentSelections = allPlayerSelects.map(select => select.value);
-            const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
+            const sortedPlayers = [...appState.players].sort((a, b) => a.name.localeCompare(b.name));
 
             allPlayerSelects.forEach(select => {
-                select.innerHTML = '<option value="" disabled selected>Selecciona jugador</option>';
+                select.innerHTML = '<option value="" disabled selected>Selecciona</option>'; // Más corto
                 sortedPlayers.forEach(player => {
                     const option = document.createElement('option');
                     option.value = player.id;
@@ -325,31 +316,31 @@
             });
 
              allPlayerSelects.forEach((select, index) => {
-                 if (currentSelections[index] && players.some(p => p.id == currentSelections[index])) {
+                 if (currentSelections[index] && appState.players.some(p => p.id == currentSelections[index])) {
                      select.value = currentSelections[index];
                  }
              });
         }
 
-        /** Actualiza el desplegable para seleccionar jugador en estadísticas de pareja */
+        /** Actualiza UI: Desplegable para estadísticas de pareja */
         function updatePartnershipPlayerSelect() {
             const currentValue = partnershipPlayerSelect.value;
             partnershipPlayerSelect.innerHTML = '<option value="" disabled selected>Selecciona un jugador</option>';
-            const sortedPlayers = [...players].sort((a, b) => a.name.localeCompare(b.name));
+            const sortedPlayers = [...appState.players].sort((a, b) => a.name.localeCompare(b.name));
             sortedPlayers.forEach(player => {
                 const option = document.createElement('option');
                 option.value = player.id;
                 option.textContent = player.name;
                 partnershipPlayerSelect.appendChild(option);
             });
-            if (currentValue && players.some(p => p.id == currentValue)) {
+            if (currentValue && appState.players.some(p => p.id == currentValue)) {
                 partnershipPlayerSelect.value = currentValue;
             } else {
                  clearPartnershipStatsDisplay();
             }
         }
 
-        /** Muestra las estadísticas de pareja para el jugador seleccionado */
+        /** Actualiza UI: Muestra estadísticas de pareja */
         function displayPartnershipStats(selectedPlayerId) {
             partnershipListUl.innerHTML = '';
             partnershipPlaceholder.style.display = 'none';
@@ -361,13 +352,14 @@
 
             const selectedIdNum = parseInt(selectedPlayerId);
             const partnerships = [];
+            const partnershipData = calculatedStats.partnershipData; // Usar stats calculadas
 
             for (const key in partnershipData) {
                 const ids = key.split('-').map(Number);
                 const count = partnershipData[key];
                 if (ids.includes(selectedIdNum)) {
                     const partnerId = ids.find(id => id !== selectedIdNum);
-                    const partner = players.find(p => p.id === partnerId);
+                    const partner = appState.players.find(p => p.id === partnerId); // Buscar en la lista de jugadores
                     if (partner) {
                         partnerships.push({ name: partner.name, count: count });
                     }
@@ -375,52 +367,63 @@
             }
 
             if (partnerships.length === 0) {
-                partnershipListUl.innerHTML = '<li class="text-gray-500 italic text-sm">Este jugador aún no ha jugado en pareja con nadie.</li>';
+                partnershipListUl.innerHTML = '<li class="text-gray-500 italic text-sm">No ha jugado en pareja.</li>';
             } else {
                 partnerships.sort((a, b) => b.count - a.count);
                 partnerships.forEach(p => {
                     const li = document.createElement('li');
-                    li.innerHTML = `<span class="font-medium">${p.name}:</span> ${p.count} ${p.count === 1 ? 'partido' : 'partidos'} juntos`;
+                    li.innerHTML = `<span class="font-medium">${p.name}:</span> ${p.count} ${p.count === 1 ? 'vez' : 'veces'}`;
                     partnershipListUl.appendChild(li);
                 });
             }
         }
 
-        /** Limpia el área de visualización de estadísticas de pareja */
+        /** Limpia UI: Área de estadísticas de pareja */
         function clearPartnershipStatsDisplay() {
              partnershipListUl.innerHTML = '';
              partnershipPlaceholder.style.display = 'block';
         }
 
-        /** Actualiza la tabla de clasificación */
+        /** Actualiza UI: Tabla de clasificación */
         function updateRankingTable() {
             rankingTableBody.innerHTML = '';
-            if (players.length === 0) {
-                rankingTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Añade jugadores y registra partidos.</td></tr>';
+            if (appState.players.length === 0) {
+                rankingTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Añade jugadores.</td></tr>';
                 return;
             }
-            const sortedPlayers = [...players].sort((a, b) => {
+
+            // Crear un array combinado de jugadores y sus stats calculadas
+            const rankedPlayers = appState.players.map(player => ({
+                ...player,
+                ...(calculatedStats.playerStats[player.id] || { points: 0, played: 0, wins: 0, draws: 0, losses: 0 }) // Usar stats o default
+            })).sort((a, b) => { // Ordenar
                 if (b.points !== a.points) return b.points - a.points;
                 if (b.wins !== a.wins) return b.wins - a.wins;
                 return a.name.localeCompare(b.name);
             });
-            sortedPlayers.forEach((player, index) => {
+
+            if (rankedPlayers.length === 0) { // Puede pasar si los jugadores no tienen stats aún
+                 rankingTableBody.innerHTML = '<tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 italic">Registra partidos.</td></tr>';
+                 return;
+            }
+
+            rankedPlayers.forEach((player, index) => {
                 const row = rankingTableBody.insertRow();
                 row.classList.add(index % 2 === 0 ? 'bg-white' : 'bg-gray-50', 'hover:bg-sky-50');
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900 text-center">${index + 1}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">${player.name}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm font-semibold text-gray-900 text-center">${player.points}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 text-center">${player.played}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm text-green-600 text-center">${player.wins}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm text-yellow-600 text-center">${player.draws}</td>`;
-                row.insertCell().outerHTML = `<td class="px-4 py-2 whitespace-nowrap text-sm text-red-600 text-center">${player.losses}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs font-medium text-gray-900 text-center">${index + 1}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs text-gray-700">${player.name}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs font-semibold text-gray-900 text-center">${player.points}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs text-gray-500 text-center">${player.played}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs text-green-600 text-center">${player.wins}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs text-yellow-600 text-center">${player.draws}</td>`;
+                row.insertCell().outerHTML = `<td class="px-3 py-1.5 whitespace-nowrap text-xs text-red-600 text-center">${player.losses}</td>`;
             });
         }
 
-        /** Actualiza contador de jugadores */
+        /** Actualiza UI: Contador de jugadores */
         function updatePlayerCount() {
-            playerCountSpan.textContent = players.length;
-            const limitReached = players.length >= MAX_PLAYERS;
+            playerCountSpan.textContent = appState.players.length;
+            const limitReached = appState.players.length >= MAX_PLAYERS;
             addPlayerBtn.disabled = limitReached;
             playerNameInput.disabled = limitReached;
             playerNameInput.placeholder = limitReached ? "Máximo alcanzado" : "Nombre del jugador";
@@ -429,22 +432,79 @@
             playerNameInput.classList.toggle('bg-gray-100', limitReached);
         }
 
+         /** Actualiza UI: Historial de Partidos */
+        function displayMatchHistory() {
+            matchHistoryListUl.innerHTML = ''; // Limpiar lista
+            if (appState.matchHistory.length === 0) {
+                matchHistoryListUl.innerHTML = '<li class="text-gray-500 italic">No hay partidos registrados.</li>';
+                return;
+            }
+
+            // Ordenar del más reciente al más antiguo
+            const sortedHistory = [...appState.matchHistory].sort((a, b) => b.timestamp - a.timestamp);
+
+            sortedHistory.forEach(match => {
+                const li = document.createElement('li');
+                li.classList.add('p-2.5', 'rounded-md', 'border', 'border-gray-200', 'bg-gray-50', 'flex', 'justify-between', 'items-center', 'flex-wrap', 'gap-2');
+
+                // Función auxiliar para obtener nombre o 'Jugador Eliminado'
+                const getPlayerName = (id) => {
+                    const player = appState.players.find(p => p.id === id);
+                    return player ? player.name : '<i class="text-red-500">Eliminado</i>';
+                };
+
+                const teamAName1 = getPlayerName(match.teamA[0]);
+                const teamAName2 = getPlayerName(match.teamA[1]);
+                const teamBName1 = getPlayerName(match.teamB[0]);
+                const teamBName2 = getPlayerName(match.teamB[1]);
+
+                let resultText = '';
+                if (match.result === 'teamA') resultText = '<strong class="text-blue-600">Gana A</strong>';
+                else if (match.result === 'teamB') resultText = '<strong class="text-green-600">Gana B</strong>';
+                else resultText = '<strong class="text-yellow-600">Empate</strong>';
+
+                // Formatear fecha
+                const date = new Date(match.timestamp);
+                const formattedDate = `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+                li.innerHTML = `
+                    <div class="flex-grow text-xs">
+                        <span class="font-medium text-blue-700">A:</span> ${teamAName1} / ${teamAName2} <br>
+                        <span class="font-medium text-green-700">B:</span> ${teamBName1} / ${teamBName2} <br>
+                        <span class="text-gray-600">${resultText}</span> - <span class="text-gray-500">${formattedDate}</span>
+                    </div>
+                    <button class="delete-match-btn bg-red-100 hover:bg-red-200 text-red-700 text-xs font-semibold py-1 px-2 rounded" data-match-id="${match.id}" title="Eliminar este partido">
+                        <i class="fas fa-times"></i> Eliminar
+                    </button>
+                `;
+                matchHistoryListUl.appendChild(li);
+            });
+
+             // Añadir listeners a los botones de eliminar (después de crearlos)
+             document.querySelectorAll('.delete-match-btn').forEach(button => {
+                 button.addEventListener('click', handleDeleteMatchClick);
+             });
+        }
+
+        // --- Handlers de Eventos ---
+
         /** Añade un nuevo jugador */
         function handleAddPlayer() {
             const name = playerNameInput.value.trim();
             if (!name) { showFeedback("Introduce un nombre.", "error"); return; }
-            if (players.length >= MAX_PLAYERS) { showFeedback(`Máximo ${MAX_PLAYERS} jugadores.`, "error"); return; }
-            if (players.some(p => p.name.toLowerCase() === name.toLowerCase())) { showFeedback(`"${name}" ya existe.`, "error"); return; }
-            const newPlayer = { id: Date.now(), name: name, points: 0, played: 0, wins: 0, draws: 0, losses: 0 };
-            players.push(newPlayer);
+            if (appState.players.length >= MAX_PLAYERS) { showFeedback(`Máximo ${MAX_PLAYERS} jugadores.`, "error"); return; }
+            if (appState.players.some(p => p.name.toLowerCase() === name.toLowerCase())) { showFeedback(`"${name}" ya existe.`, "error"); return; }
+            const newPlayer = { id: Date.now(), name: name }; // Solo ID y nombre
+            appState.players.push(newPlayer);
             playerNameInput.value = '';
+            recalculateAllStats(); // Recalcular por si acaso, aunque no debería afectar
             updateAllUI();
-            saveToLocalStorage();
+            saveStateToLocalStorage();
             showFeedback(`Jugador "${name}" añadido.`, "success");
             playerNameInput.focus();
         }
 
-        /** Registra resultado de partido y actualiza datos de parejas */
+        /** Registra resultado de partido */
         function handleRecordMatch() {
             const teamAIds = [parseInt(teamAPlayer1Select.value), parseInt(teamAPlayer2Select.value)];
             const teamBIds = [parseInt(teamBPlayer1Select.value), parseInt(teamBPlayer2Select.value)];
@@ -455,52 +515,65 @@
             if (new Set(allSelectedIds).size !== 4) { showFeedback("Un jugador no puede repetirse.", "error"); return; }
             if (!result) { showFeedback("Selecciona el resultado.", "error"); return; }
 
-            const teamAPlayers = teamAIds.map(id => players.find(p => p.id === id));
-            const teamBPlayers = teamBIds.map(id => players.find(p => p.id === id));
-            if (teamAPlayers.some(p => !p) || teamBPlayers.some(p => !p)) { showFeedback("Error interno: Jugador no encontrado.", "error"); return; }
-
-            let feedbackMsg = `Partido: ${teamAPlayers[0].name}/${teamAPlayers[1].name} vs ${teamBPlayers[0].name}/${teamBPlayers[1].name}. `;
-            if (result === 'teamA') {
-                teamAPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
-                teamBPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
-                feedbackMsg += `Gana Equipo A.`;
-            } else if (result === 'teamB') {
-                teamBPlayers.forEach(p => { p.points += WIN_POINTS; p.wins++; p.played++; });
-                teamAPlayers.forEach(p => { p.points += LOSS_POINTS; p.losses++; p.played++; });
-                 feedbackMsg += `Gana Equipo B.`;
-            } else if (result === 'draw') {
-                [...teamAPlayers, ...teamBPlayers].forEach(p => { p.points += DRAW_POINTS; p.draws++; p.played++; });
-                 feedbackMsg += `Empate.`;
-            }
-
-            const updatePartnership = (id1, id2) => {
-                const key = `${Math.min(id1, id2)}-${Math.max(id1, id2)}`;
-                partnershipData[key] = (partnershipData[key] || 0) + 1;
+            // Crear nueva entrada en el historial
+            const newMatch = {
+                id: Date.now(), // ID único para el partido
+                teamA: teamAIds,
+                teamB: teamBIds,
+                result: result,
+                timestamp: Date.now() // Guardar fecha/hora
             };
-            updatePartnership(teamAIds[0], teamAIds[1]);
-            updatePartnership(teamBIds[0], teamBIds[1]);
+            appState.matchHistory.push(newMatch);
 
+            recalculateAllStats(); // Recalcular todo desde el historial actualizado
             updateAllUI();
-            saveToLocalStorage();
-            showFeedback(feedbackMsg, "success");
+            saveStateToLocalStorage();
 
+            const teamAPlayers = teamAIds.map(id => appState.players.find(p => p.id === id));
+            const teamBPlayers = teamBIds.map(id => appState.players.find(p => p.id === id));
+            showFeedback(`Partido registrado: ${teamAPlayers[0].name}/${teamAPlayers[1].name} vs ${teamBPlayers[0].name}/${teamBPlayers[1].name}.`, "success");
+
+            // Limpiar formulario
             allPlayerSelects.forEach(select => select.value = "");
             matchResultSelect.value = "";
-            if (partnershipPlayerSelect.value && allSelectedIds.includes(parseInt(partnershipPlayerSelect.value))) {
-                 displayPartnershipStats(partnershipPlayerSelect.value);
+        }
+
+         /** Maneja click en botón Eliminar Partido */
+        function handleDeleteMatchClick(event) {
+            const matchId = parseInt(event.currentTarget.getAttribute('data-match-id'));
+            if (isNaN(matchId)) return;
+
+            const matchIndex = appState.matchHistory.findIndex(m => m.id === matchId);
+            if (matchIndex === -1) {
+                showFeedback("Error: Partido no encontrado en el historial.", "error");
+                return;
+            }
+
+            // Mostrar detalles para confirmar
+            const match = appState.matchHistory[matchIndex];
+            const getName = (id) => appState.players.find(p => p.id === id)?.name || 'N/A';
+            const details = `A: ${getName(match.teamA[0])}/${getName(match.teamA[1])} vs B: ${getName(match.teamB[0])}/${getName(match.teamB[1])} (${match.result})`;
+
+            if (confirm(`¿Seguro que quieres eliminar este partido?\n\n${details}\n\nEsta acción recalculará todas las estadísticas.`)) {
+                // Eliminar del historial
+                appState.matchHistory.splice(matchIndex, 1);
+                // Recalcular y actualizar
+                recalculateAllStats();
+                updateAllUI();
+                saveStateToLocalStorage();
+                showFeedback("Partido eliminado correctamente.", "success");
             }
         }
 
+
         /** Reinicia todos los datos */
         function handleResetData() {
-            if (confirm("⚠️ ¿Estás MUY seguro?\n\nSe borrarán TODOS los jugadores, resultados y estadísticas de parejas.\nEsta acción NO SE PUEDE DESHACER.")) {
+            if (confirm("⚠️ ¿Estás MUY seguro?\n\nSe borrarán TODOS los jugadores y el historial de partidos.\nEsta acción NO SE PUEDE DESHACER.")) {
                 if (confirm("ÚLTIMA OPORTUNIDAD: ¿Confirmas el borrado completo de datos?")) {
-                    players = [];
-                    partnershipData = {};
-                    // Actualizar estado global antes de limpiar localStorage
-                    appData = { players: players, partnershipData: partnershipData };
-                    localStorage.removeItem(LOCAL_STORAGE_KEY);
+                    appState = { players: [], matchHistory: [] }; // Resetear estado
+                    recalculateAllStats(); // Recalcular (resultará en stats vacías)
                     updateAllUI();
+                    localStorage.removeItem(LOCAL_STORAGE_KEY); // Limpiar localStorage
                     feedbackArea.innerHTML = '';
                     showFeedback("Todos los datos han sido reiniciados.", "success");
                 } else { showFeedback("Reinicio cancelado.", "success"); }
@@ -509,16 +582,20 @@
 
         /** Actualiza toda la UI */
         function updateAllUI() {
-            updateMatchPlayerDropdowns();
-            updateRankingTable();
-            updatePlayerCount();
+            // El orden es importante: calcular primero, luego mostrar
+            // recalculateAllStats(); // Se llama explícitamente donde se necesita (load, add match, delete match, reset)
             updatePlayerListUI();
+            updateMatchPlayerDropdowns();
             updatePartnershipPlayerSelect();
+            updateRankingTable(); // Usa calculatedStats
+            displayMatchHistory(); // Muestra historial
+            // Actualizar stats de pareja si hay un jugador seleccionado
             if (partnershipPlayerSelect.value) {
-                displayPartnershipStats(partnershipPlayerSelect.value);
+                displayPartnershipStats(partnershipPlayerSelect.value); // Usa calculatedStats
             } else {
                 clearPartnershipStatsDisplay();
             }
+            updatePlayerCount(); // Solo necesita appState.players.length
         }
 
         // --- Event Listeners ---
@@ -527,19 +604,19 @@
         recordMatchBtn.addEventListener('click', handleRecordMatch);
         resetDataBtn.addEventListener('click', handleResetData);
         partnershipPlayerSelect.addEventListener('change', (event) => {
-            displayPartnershipStats(event.target.value);
+            displayPartnershipStats(event.target.value); // Recalcula y muestra stats para el jugador
         });
+         // Los listeners para botones de eliminar se añaden dinámicamente en displayMatchHistory
 
         // --- Inicialización ---
         document.addEventListener('DOMContentLoaded', () => {
-             // Cargar datos al inicio
-             appData = loadFromLocalStorage() || { players: [], partnershipData: {} };
-             players = appData.players;
-             partnershipData = appData.partnershipData;
-             updateAllUI(); // Actualizar toda la UI con los datos cargados
+             loadStateFromLocalStorage(); // Cargar jugadores e historial
+             recalculateAllStats(); // Calcular stats iniciales desde el historial cargado
+             updateAllUI(); // Actualizar toda la UI
         });
 
     </script>
 
 </body>
 </html>
+
